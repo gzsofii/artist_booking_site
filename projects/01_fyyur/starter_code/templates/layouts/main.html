@@ -75,6 +75,7 @@
                   aria-label="Search">
               </form>
               {% endif %}
+              
             </li>
           </ul>
           <ul class="nav navbar-nav">
@@ -100,6 +101,35 @@
         {% endif %}
       {% endwith %}
 
+
+      {% if (request.endpoint == 'shows') or
+          (request.endpoint == 'search_show' )%}
+      <form class="search" method="post" action="/shows/search">
+        <label for="location">Location:<label>
+        <input class="form-control"
+                  type="search"
+                  name="location_search_term"
+                  placeholder="Location"
+                  aria-label="Search">
+        
+        <label for="venue">Venue:</label>
+        <input class="form-control"
+                  type="search"
+                  name="venue_search_term"
+                  placeholder="Venue"
+                  aria-label="Search">
+        
+        <label for="artist">Artist:</label>
+        <input class="form-control"
+                  type="search"
+                  name="artist_search_term"
+                  placeholder="Artist"
+                  aria-label="Search">
+
+        <input type="submit" class="btn btn-primary btn-lg" value="Search">
+      </form>
+      {% endif %}
+
       {% block content %}{% endblock %}
       
     </main>
@@ -117,6 +147,7 @@
   <script>window.jQuery || document.write('<script type="text/javascript" src="/static/js/libs/jquery-1.11.1.min.js"><\/script>')</script>
   <script type="text/javascript" src="/static/js/libs/bootstrap-3.1.1.min.js" defer></script>
   <script type="text/javascript" src="/static/js/plugins.js" defer></script>
+  
 
 </body>
 </html>

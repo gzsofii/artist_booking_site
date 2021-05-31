@@ -1,0 +1,6 @@
+in creating artist (and probably venue as well) if only 1 genre is given, it will be stored in the database as an array of characters
+problem: in the form dict, only 1 genre is visible (when converting to normal dict, only 1 can remain)
+
+seeking options when creating
+
+migrate (cascade)
