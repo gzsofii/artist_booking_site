@@ -2,7 +2,7 @@
 {% block title %}Show Search{% endblock %}
 {% block content %}
 
-    <h4>Number of results: {{results.num_shows}}</h4>
+    <h3>Number of results: {{results.num_shows}}</h3>
     <ul class="items">
         {% for show in results.data %}
         <div class="col-sm-4">
@@ -15,12 +15,6 @@
             </div>
         </div>
         {% endfor %}
-
-
     </ul>
 
-
-   
-{#    Todo implement show search frontend #}
-   
 {% endblock %}

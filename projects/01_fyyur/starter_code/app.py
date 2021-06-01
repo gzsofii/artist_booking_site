@@ -13,7 +13,6 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
-import enum
 import sys
 from sqlalchemy import tuple_, or_
 from sqlalchemy.inspection import inspect
@@ -28,33 +27,10 @@ app.config.from_object('config')
 #db = SQLAlchemy(app) # defined in models.py
 db.init_app(app)
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///fyyur' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 
 migrate = Migrate(app, db)
-
-'''class Genre(enum.Enum):
-  Alternative = "Alternative"
-  Blues = "Blues"
-  Classical = "Classical"
-  Country = "Country"
-  Electronic = "Electronic"
-  Folk = "Folk"
-  Funk = "Funk"
-  HipHop =  'Hip-Hop'
-  HeavyMetal = 'Heavy Metal'
-  Instrumental = 'Instrumental'
-  Jazz = 'Jazz'
-  MusicalTheatre = 'Musical Theatre'
-  Pop = 'Pop'
-  Punk = 'Punk'
-  RnB = 'R&B'
-  Reggae = 'Reggae'
-  RocknRoll = 'Rock n Roll'
-  Soul = 'Soul'
-  Other = 'Other'
-'''
 
 #converts an instance of a model (eg a venue or an artist) to a python dictionary
 def model_to_dict(model):
@@ -95,7 +71,6 @@ def venues():
   try:
     locations = Venue.query.distinct(tuple_(Venue.city, Venue.state)).all() # distinc locations
     current_time = datetime.now()
-    
     for loc in locations:
       venues = Venue.query.filter_by(city=loc.city, state=loc.state).with_entities(Venue.name, Venue.id).all()
       venues_dict = []
@@ -113,7 +88,7 @@ def venues():
       data.append(loc_body)
   except:
     print(sys.exc_info())
-
+  
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
@@ -121,6 +96,7 @@ def search_venues():
   search_term = request.form.get('search_term', '')
   current_time = datetime.now()
   venues = Venue.query.filter(Venue.name.ilike('%' + search_term + '%')).all()
+  
   #print(venues)
   venues_body = []
   for venue in venues:
@@ -143,20 +119,21 @@ def show_venue(venue_id):
   #print(type(venue)) # it has type Venue
   data = model_to_dict(venue)
   
-  shows = Show.query.filter_by(venue_id=venue_id).all()
+  #shows = Show.query.filter_by(venue_id=venue_id).all()
+  shows = db.session.query(Show, Venue, Artist).join(Venue, Artist).filter(Venue.id==venue_id).all()
   past_shows = []
   upcoming_shows = []
 
   current_time = datetime.now()
   for show in shows:
-    artist = Artist.query.get(show.artist_id)
+    #artist = Artist.query.get(show.artist_id)
     s = {
-      "artist_id": show.artist_id,
-      "artist_name": artist.name,
-      "artist_image_link": artist.image_link,
-      "start_time": show.start_time.strftime("%m/%d/%Y, %H:%M")
+      "artist_id": show.Artist.id,
+      "artist_name": show.Artist.name,
+      "artist_image_link": show.Artist.image_link,
+      "start_time": show.Show.start_time.strftime("%m/%d/%Y, %H:%M")
     }
-    if current_time > show.start_time:
+    if current_time > show.Show.start_time:
       past_shows.append(s)
     else:
       upcoming_shows.append(s)
@@ -193,7 +170,6 @@ def create_venue_submission():
       seeking_talent = not not request.form.get('seeking_talent'), # convert to boolean
       seeking_description = request.form.get('seeking_description'),
     )    
-    #venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, facebook_link=facebook_link, image_link=image_link, website_link=website_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
     db.session.add(venue)
     db.session.commit()
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
@@ -470,7 +446,7 @@ def search_shows():
     'num_shows': len(data),
     'data': data
   }
-  return render_template('pages/search_show.html', results=response)
+  return render_template('pages/search_shows.html', results=response)
 
 
 @app.errorhandler(404)

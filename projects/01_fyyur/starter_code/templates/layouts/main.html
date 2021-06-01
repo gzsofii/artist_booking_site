@@ -103,30 +103,33 @@
 
 
       {% if (request.endpoint == 'shows') or
-          (request.endpoint == 'search_show' )%}
-      <form class="search" method="post" action="/shows/search">
-        <label for="location">Location:<label>
-        <input class="form-control"
+          (request.endpoint == 'search_shows' )%}
+      <form class="search_shows" method="post" action="/shows/search">
+        <label>Location:</label>
+        <input class="search_field"
                   type="search"
+                  id="location_search_term"
                   name="location_search_term"
                   placeholder="Location"
-                  aria-label="Search">
+                  aria-label="Search"><br/>
         
-        <label for="venue">Venue:</label>
-        <input class="form-control"
+        <label>Venue:</label>
+        <input class="search_field"
                   type="search"
+                  id="venue_search_term"
                   name="venue_search_term"
                   placeholder="Venue"
-                  aria-label="Search">
+                  aria-label="Search"><br/>
         
-        <label for="artist">Artist:</label>
-        <input class="form-control"
+        <label>Artist:</label>
+        <input class="search_field"
                   type="search"
+                  id="artist_search_term"
                   name="artist_search_term"
                   placeholder="Artist"
-                  aria-label="Search">
-
-        <input type="submit" class="btn btn-primary btn-lg" value="Search">
+                  aria-label="Search"><br/>
+        <br/>
+        <button type="submit" class="btn btn-primary btn-lg" >Search</button>
       </form>
       {% endif %}
 
